@@ -33,15 +33,15 @@ def update_1rand(h,strat,av):
 
     return np.sort(np.array(h1))
 
-def update_2(h1,strat,av):
+def update_2(h,strat,av):
 
     for i in range(3):
         if len(av)<1:break
         else:
             if len(strat)<3: w=0
             else: w=npr.randint(2)
-            k=np.where(h1==strat[w])[0]
+            k=np.where(h==strat[w])[0]
             if len(k)<1:break
-            else:h1[k[0]]=strat[-w-1]
+            else:h[k[0]]=strat[-w-1]
 
-    return np.sort(np.array(h1))
+    return np.sort(np.array(h))
