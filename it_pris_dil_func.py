@@ -2,6 +2,7 @@ from functools import partial
 import strategies as st
 import update_func as up
 import numpy as np
+import numpy.random as npr
 import matplotlib.pyplot as plt
 
 strat = {'nice': partial(st.nice_guy),
@@ -14,17 +15,29 @@ update = {'update_1': partial(up.update_1),
         'update_1rand': partial(up.update_1rand),
         'update_2': partial(up.update_2)}
 
-def fight(f,g,N=None,graph=False):
+def mutation(q, pq, i, w):
+    if npr.random() < pq:
+        return strat['nice'](i,w)
+    else:
+        return strat[q](i,w)
+
+def fight(f,g,probf=0,probg=0,N=None,graph=False):
 
     if N == None: N = 100
+    #if pf == None: pf = 0
+    #if pg == None: pg = 0
             
     R, S, T, P = 3, 0, 5, 1
     M = np.array([[R,S],[T,P]])
 
     p1, p2 = [-1], [-1]
     for i in range(1,N+1):
-        p1.append(strat[f](i,p2[i-1]))
-        p2.append(strat[g](i,p1[i-1]))
+        if probf == 0 and probg == 0:
+            p1.append(strat[f](i,p2[i-1]))
+            p2.append(strat[g](i,p1[i-1]))
+        else:
+            p1.append(mutation(f,probf,i,p2[i-1]))
+            p2.append(mutation(g,probg,i,p1[i-1]))
 
     p1 = np.array(p1[1:]).T
     p2 = np.array(p2[1:]).T
@@ -70,6 +83,8 @@ def round_robin(h,s,ord=False):
         unique = unique[sort]
 
     return unique, media
+
+
 
 def tournament(h,f,s,it=None):
     
