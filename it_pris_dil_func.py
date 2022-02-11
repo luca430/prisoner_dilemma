@@ -12,7 +12,8 @@ strat = {'nice': partial(st.nice_guy),
 
 update = {'update_1': partial(up.update_1),
         'update_1rand': partial(up.update_1rand),
-        'update_2': partial(up.update_2)}
+        'update_2': partial(up.update_2),
+        'update_3': partial(up.update_3)}
 
 def fight(f,g,N=None,graph=False):
 
