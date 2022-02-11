@@ -47,10 +47,10 @@ def update_2(h,strat,av):
             if len(av)<1: break
             else:
                 if len(strat)<3: w=0
-                else: w=npr.randint(2)
+                else: w=npr.randint(2)   
                 k=np.where(h==strat[w])[0]
             if len(k)<1: break
-            else:h[k[0]]=strat[-w-1]
+            else:h[k[0]]=strat[-npr.randint(2)-1]
 
     return np.sort(np.array(h))
 def update_3(h,strat,av):
