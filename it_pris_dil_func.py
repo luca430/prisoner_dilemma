@@ -128,6 +128,29 @@ def round_robin(h,s,ord=False):
 
     return u, m
 
+'''def tournament(h,f,s,it=None):
+    
+    if it == None: it = 100
+
+    n_matrix = np.zeros([it,len(s)])  #matrice per salvare il numero di strat per it
+    val_matrix = np.zeros([it,len(s)])  #matrice per salvare il punteggio medio di una strat per it
+    
+    for i in range(it):
+        strategies, average_results = round_robin(h,s)
+        unique, numbers = np.unique(h, return_counts = True)
+        numbers_1 = np.array([0 for i in range(len(s))])
+        average_1 = np.array([0 for i in range(len(s))])
+
+        for j in range(len(unique)):
+            numbers_1[unique[j]] = int(numbers[j])
+            average_1[strategies[j]] = average_results[j]
+
+        n_matrix[i] = numbers_1
+        val_matrix[i] = average_1
+
+        h = update[f](h,strategies,average_results)
+
+    return n_matrix, val_matrix'''
 
 def tournament(h,f,s,it=None):
     
@@ -142,7 +165,8 @@ def tournament(h,f,s,it=None):
 
     for i in range(it):    
         strategies, average_results = round_robin(h,s)
-        unique, numbers = np.unique(h, return_counts = True, axis=1)
+        if np.shape(h) == (len(h.T),): unique, numbers = np.unique(h, return_counts = True)
+        else: unique, numbers = np.unique(h, return_counts = True, axis=1)
 
         for j in range(new_strat):
             n_matrix = np.hstack((n_matrix,new_col))
@@ -151,12 +175,18 @@ def tournament(h,f,s,it=None):
         numbers_1 = np.zeros(len(n_matrix.T))
         average_1 = np.zeros(len(n_matrix.T))
 
-        for j in range(len(unique.T)):
-            for k in range(len(s_ref)):
-                if np.all(s_ref[k] == unique[:,j]):
-                    ind = k
-            numbers_1[ind] = int(numbers[j])
-            average_1[ind] = average_results[j]
+        if np.shape(h) == (len(h.T),):
+            for j in range(len(unique)):
+                numbers_1[unique[j]] = int(numbers[j])
+                average_1[strategies[j]] = average_results[j]
+
+        else:
+            for j in range(len(unique.T)):
+                for k in range(len(s_ref)):
+                    if np.all(s_ref[k] == unique[:,j]):
+                        ind = k
+                numbers_1[ind] = int(numbers[j])
+                average_1[ind] = average_results[j]
 
         n_matrix[i] = numbers_1
         val_matrix[i] = average_1
