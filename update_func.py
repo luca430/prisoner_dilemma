@@ -34,7 +34,7 @@ def update_1rand(h,strat,av):
     return np.sort(np.array(h1))
 
 
-p_mut = 2/30
+p_mut = 0
 
 def update_2(h,strat,av,s,s_ref):
 
@@ -63,10 +63,11 @@ def update_2(h,strat,av,s,s_ref):
 
         for i in range(len(h)):
             if npr.random() < p_mut:
-                h[1,i] = npr.poisson(lam=0.01)
+                #h[1,i] = npr.poisson(lam=0.01)
+                h[1,i] = round(npr.random(),2)
                 if h[1,i] > 1: h[1,i] = 1
                 new_strat += 1
-                s.append('{}_{}'.format(s[int(h[0,i])],h[1,i]))
-                s_ref = np.hstack((s_ref, h[:,i].T))
+                s.append('{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100)))
+                s_ref.append(h[:,i])
 
     return np.sort(np.array(h)), new_strat

@@ -132,28 +132,28 @@ def round_robin(h,s,ord=False):
 def tournament(h,f,s,it=None):
     
     if it == None: it = 100
-
-    s_ref = np.zeros((2,len(s)))
-    s_ref[0] = np.arange(len(s))
+    
+    s_ref = [[0,0],[1,0],[2,0],[3,0],[4,0]]
 
     new_strat = 0
     n_matrix = np.zeros([it,len(s)])  #matrice per salvare il numero di strat per it
     val_matrix = np.zeros([it,len(s)])  #matrice per salvare il punteggio medio di una strat per it
-    new_col = np.zeros(it)
+    new_col = np.zeros((it,1))
 
-    for i in range(it):
+    for i in range(it):    
         strategies, average_results = round_robin(h,s)
         unique, numbers = np.unique(h, return_counts = True, axis=1)
 
         for j in range(new_strat):
             n_matrix = np.hstack((n_matrix,new_col))
+            val_matrix = np.hstack((val_matrix,new_col))
 
         numbers_1 = np.zeros(len(n_matrix.T))
         average_1 = np.zeros(len(n_matrix.T))
 
         for j in range(len(unique.T)):
-            for k in range(len(s_ref.T)):
-                if np.all(s_ref[:,k] == unique[:,j]):
+            for k in range(len(s_ref)):
+                if np.all(s_ref[k] == unique[:,j]):
                     ind = k
             numbers_1[ind] = int(numbers[j])
             average_1[ind] = average_results[j]
@@ -162,5 +162,6 @@ def tournament(h,f,s,it=None):
         val_matrix[i] = average_1
 
         h, new_strat = update[f](h,strategies,average_results,s,s_ref)
+        print(h)
 
     return n_matrix, val_matrix
