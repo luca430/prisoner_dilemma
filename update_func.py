@@ -33,15 +33,41 @@ def update_1rand(h,strat,av):
 
     return np.sort(np.array(h1))
 
-def update_2(h,strat,av):
 
-    for i in range(3):
-        if len(av)<1:break
-        else:
-            if len(strat)<3: w=0
-            else: w=npr.randint(2)
-            k=np.where(h==strat[w])[0]
-            if len(k)<1:break
-            else:h[k[0]]=strat[-w-1]
+p_mut = 0
 
-    return np.sort(np.array(h))
+def update_2(h,strat,av,s,s_ref):
+
+    h = np.array(h)
+    new_strat = 0
+
+    if np.shape(h) == (len(h.T),): #caso senza mutazione
+        for i in range(3):
+            if len(av)<1:break
+            else:
+                if len(strat)<3: w=0
+                else: w=npr.randint(2)
+                k=np.where(h==strat[w])[0]
+                if len(k)<1:break
+                else:h[k[0]]=strat[-npr.randint(2)-1]
+    
+    else:                       #caso con mutazione
+        for i in range(3):
+            if len(av)<1:break
+            else:
+                if len(strat)<3: w=0
+                else: w=npr.randint(2)
+                k=np.where(h[0]==strat[w])[0]
+                if len(k)<1:break
+                else:h[0,k[0]]=strat[-npr.randint(2)-1]
+
+        for i in range(len(h)):
+            if npr.random() < p_mut:
+                #h[1,i] = npr.poisson(lam=0.01)
+                h[1,i] = round(npr.random(),2)
+                if h[1,i] > 1: h[1,i] = 1
+                new_strat += 1
+                s.append('{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100)))
+                s_ref.append(h[:,i])
+
+    return np.sort(np.array(h)), new_strat
