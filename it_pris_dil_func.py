@@ -122,10 +122,8 @@ def round_robin(h,s,ord=False):
         if ord == True:
             sort = m.argsort()
             m = m[sort]
-            u = u.T
-            u = u[sort]
-            u = u.T
-
+            u[0] = u[0,sort]
+            u[1] = u[1,sort]
     return u, m
 
 '''def tournament(h,f,s,it=None):
@@ -152,10 +150,9 @@ def round_robin(h,s,ord=False):
 
     return n_matrix, val_matrix'''
 
-def tournament(h,f,s,it=None):
+def tournament(h,f,s,it=None,mutation_prob=None):
     
     if it == None: it = 100
-    
     s_ref = [[0,0],[1,0],[2,0],[3,0],[4,0]]
 
     new_strat = 0
@@ -164,7 +161,7 @@ def tournament(h,f,s,it=None):
     new_col = np.zeros((it,1))
 
     for i in range(it):    
-        strategies, average_results = round_robin(h,s)
+        strategies, average_results = round_robin(h,s,ord=True)
         if np.shape(h) == (len(h.T),): unique, numbers = np.unique(h, return_counts = True)
         else: unique, numbers = np.unique(h, return_counts = True, axis=1)
 
@@ -191,7 +188,7 @@ def tournament(h,f,s,it=None):
         n_matrix[i] = numbers_1
         val_matrix[i] = average_1
 
-        h, new_strat = update[f](h,strategies,average_results,s,s_ref)
-        print(h)
+        h, new_strat = update[f](h,strategies,average_results,s,s_ref,mutation_prob)
+        #print(h)
 
     return n_matrix, val_matrix

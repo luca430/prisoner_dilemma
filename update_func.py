@@ -34,32 +34,44 @@ def update_1rand(h,strat,av):
     return np.sort(np.array(h1))
 
 
-p_mut = 0
+def update_2(h,strat,av,s,s_ref,p_mut = None):
 
-def update_2(h,strat,av,s,s_ref):
-
+    if p_mut == None: p_mut = 0
+    
     h = np.array(h)
     new_strat = 0
 
     if np.shape(h) == (len(h.T),): #caso senza mutazione
         for i in range(3):
-            if len(av)<1:break
+            if len(strat)<=1:break
             else:
                 if len(strat)<3: w=0
-                else: w=npr.randint(2)
+                else: w=npr.randint(int(len(strat)/2))
                 k=np.where(h==strat[w])[0]
                 if len(k)<1:break
+                elif len(strat) == 1: break
                 else:h[k[0]]=strat[-npr.randint(2)-1]
     
     else:                       #caso con mutazione
         for i in range(3):
-            if len(av)<1:break
+            if len(strat)<=1:break
             else:
-                if len(strat)<3: w=0
-                else: w=npr.randint(2)
-                k=np.where(h[0]==strat[w])[0]
-                if len(k)<1:break
-                else:h[0,k[0]]=strat[-npr.randint(2)-1]
+                if len(strat)<3: w1=0
+                else: 
+                    w1=npr.randint(int(len(strat)/2)+1)
+                    w2=npr.randint(w1,int(len(strat)))
+                    if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
+                        k = -1
+                        for i in range(len(h[0])):
+                            if h[0,i] == strat[0,w1]:
+                                if h[1,i] == strat[1,w1]:
+                                    k = i
+                                    break
+                        if k<0:
+                            break
+                        elif len(strat.T) == 1: break
+                        else:
+                            h[:,k]=strat[:,w2]
 
         for i in range(len(h)):
             if npr.random() < p_mut:
@@ -70,4 +82,4 @@ def update_2(h,strat,av,s,s_ref):
                 s.append('{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100)))
                 s_ref.append(h[:,i])
 
-    return np.sort(np.array(h)), new_strat
+    return h, new_strat
