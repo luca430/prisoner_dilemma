@@ -33,16 +33,16 @@ def update_1rand(h,strat,av):
 
     return np.sort(np.array(h1))
 
-
-def update_2(h,strat,av,s,s_ref,p_mut = None):
+def update_2(h,strat,av,s,s_ref,p_mut = None,change=None):
 
     if p_mut == None: p_mut = 0
+    if change == None: change = 1
     
     h = np.array(h)
     new_strat = 0
 
     if np.shape(h) == (len(h.T),): #caso senza mutazione
-        for i in range(3):
+        for i in range(change):
             if len(strat)<=1:break
             else:
                 if len(strat)<3: w=0
@@ -53,25 +53,24 @@ def update_2(h,strat,av,s,s_ref,p_mut = None):
                 else:h[k[0]]=strat[-npr.randint(2)-1]
     
     else:                       #caso con mutazione
-        for i in range(3):
-            if len(strat)<=1:break
+        for i in range(change):
+            if len(strat.T)<=1: break
             else:
-                if len(strat)<3: w1=0
+                if len(strat.T)<3: 
+                    w1=0
+                    w2=-1
                 else: 
-                    w1=npr.randint(int(len(strat)/2)+1)
-                    w2=npr.randint(w1,int(len(strat)))
-                    if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
-                        k = -1
-                        for i in range(len(h[0])):
-                            if h[0,i] == strat[0,w1]:
-                                if h[1,i] == strat[1,w1]:
-                                    k = i
-                                    break
-                        if k<0:
+                    w1=npr.randint(int(len(strat.T)/2))  #only select killable strats among the worst half (center excluded)
+                    w2=npr.randint(int(len(strat.T)/2),int(len(strat.T)))
+                if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
+                    k = -1
+                    for i in range(len(h[0])):
+                        if np.all(h[:,i] == strat[:,w1]):
+                            k = i
                             break
-                        elif len(strat.T) == 1: break
-                        else:
-                            h[:,k]=strat[:,w2]
+                    if k<0: break
+                    else:
+                        h[:,k]=strat[:,w2]
 
         for i in range(len(h)):
             if npr.random() < p_mut:
