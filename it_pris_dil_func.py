@@ -9,20 +9,28 @@ strat = {'nice': partial(st.nice_guy),
         'bad': partial(st.bad_guy), 
         'm_nice': partial(st.mainly_nice),
         'm_bad': partial(st.mainly_bad),
-        'tit_tat': partial(st.tit_tat)}
+        'tit_tat': partial(st.tit_tat),
+        'random': partial(st.random),
+        'pavlov': partial(st.pavlov),
+        'f_tit_tat': partial(st.f_tit_tat)}
 
 update = {'update_1': partial(up.update_1),
+<<<<<<< HEAD
         'update_1rand': partial(up.update_1rand),
         'update_2': partial(up.update_2),
         'update_3': partial(up.update_3)}
 
+=======
+        'update_2': partial(up.update_2),
+        'update_3': partial(up.update_3)}
+>>>>>>> upstream/main
 
-def mutation(q, pq, i, w):
+def mutation(q, pq, i, w1, w2, w3):
 
     if npr.random() < pq:
-        return strat['nice'](i,w)
+        return strat['nice'](i,w1,w2,w3)
     else:
-        return strat[q](i,w)
+        return strat[q](i,w1,w2,w3)
 
 def fight(f,g,probf=0,probg=0,N=None,graph=False):
 
@@ -31,17 +39,17 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
     R, S, T, P = 3, 0, 5, 1
     M = np.array([[R,S],[T,P]])
 
-    p1, p2 = [-1], [-1]
-    for i in range(1,N+1):
+    p1, p2 = [-1,-1], [-1,-1]
+    for i in range(2,N+2):
         if probf == 0 and probg == 0:
-            p1.append(strat[f](i,p2[i-1]))
-            p2.append(strat[g](i,p1[i-1]))
+            p1.append(strat[f](i,p2[i-1],p1[i-1],p2[i-2]))
+            p2.append(strat[g](i,p1[i-1],p2[i-1],p1[i-2]))
         else:
-            p1.append(mutation(f,probf,i,p2[i-1]))
-            p2.append(mutation(g,probg,i,p1[i-1]))
+            p1.append(mutation(f,probf,i,p2[i-1],p1[i-1],p2[i-2]))
+            p2.append(mutation(g,probg,i,p1[i-1],p2[i-1],p1[i-2]))
 
-    p1 = np.array(p1[1:]).T
-    p2 = np.array(p2[1:]).T
+    p1 = np.array(p1[2:]).T
+    p2 = np.array(p2[2:]).T
 
     result_1 = np.cumsum([np.dot(p1[:,i].T,np.dot(M,p2[:,i])) for i in range(N)])
     result_2 = np.cumsum([np.dot(p2[:,i].T,np.dot(M,p1[:,i])) for i in range(N)])
@@ -54,7 +62,6 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
         plt.legend()
 
     return [result_1[-1], result_2[-1]]
-
 
 def r_r(h,s):
 
@@ -80,7 +87,7 @@ def r_r(h,s):
 
     media = np.round(media/n_strategies,2)
 
-    return unique, media
+    return unique, media, n_strategies
 
 def r_r_m(h,s):
 
@@ -107,58 +114,33 @@ def r_r_m(h,s):
 
     media = np.round(media/n_strategies,2)
 
-    return unique, media
+    return unique, media, n_strategies
 
 def round_robin(h,s,ord=False):
 
     h = np.array(h)
 
     if np.shape(h) == (len(h.T),): 
-        u,m = r_r(h,s)
+        u,m,n = r_r(h,s)
         if ord == True:
             sort = m.argsort()
             m = m[sort]
             u = u[sort]
+            n = n[sort]
     else: 
-        u,m = r_r_m(h,s)
+        u,m,n = r_r_m(h,s)
         if ord == True:
             sort = m.argsort()
             m = m[sort]
-            u = u.T
-            u = u[sort]
-            u = u.T
+            n = n[sort]
+            u[0] = u[0,sort]    #sort first row
+            u[1] = u[1,sort]    #sort second row
+    return u, m, n
 
-    return u, m
-
-'''def tournament(h,f,s,it=None):
+def tournament(h,f,s,it=None,mutation_prob=None,n_change=None):
     
     if it == None: it = 100
-
-    n_matrix = np.zeros([it,len(s)])  #matrice per salvare il numero di strat per it
-    val_matrix = np.zeros([it,len(s)])  #matrice per salvare il punteggio medio di una strat per it
-    
-    for i in range(it):
-        strategies, average_results = round_robin(h,s)
-        unique, numbers = np.unique(h, return_counts = True)
-        numbers_1 = np.array([0 for i in range(len(s))])
-        average_1 = np.array([0 for i in range(len(s))])
-
-        for j in range(len(unique)):
-            numbers_1[unique[j]] = int(numbers[j])
-            average_1[strategies[j]] = average_results[j]
-
-        n_matrix[i] = numbers_1
-        val_matrix[i] = average_1
-
-        h = update[f](h,strategies,average_results)
-
-    return n_matrix, val_matrix'''
-
-def tournament(h,f,s,it=None):
-    
-    if it == None: it = 100
-    
-    s_ref = [[0,0],[1,0],[2,0],[3,0],[4,0]]
+    s_ref = [[i,0] for i in range(len(s))]
 
     new_strat = 0
     n_matrix = np.zeros([it,len(s)])  #matrice per salvare il numero di strat per it
@@ -166,10 +148,7 @@ def tournament(h,f,s,it=None):
     new_col = np.zeros((it,1))
 
     for i in range(it):    
-        strategies, average_results = round_robin(h,s)
-        if np.shape(h) == (len(h.T),): unique, numbers = np.unique(h, return_counts = True)
-        else: unique, numbers = np.unique(h, return_counts = True, axis=1)
-
+        strategies, average_results, numbers = round_robin(h,s,ord=True)
         for j in range(new_strat):
             n_matrix = np.hstack((n_matrix,new_col))
             val_matrix = np.hstack((val_matrix,new_col))
@@ -177,15 +156,15 @@ def tournament(h,f,s,it=None):
         numbers_1 = np.zeros(len(n_matrix.T))
         average_1 = np.zeros(len(n_matrix.T))
 
-        if np.shape(h) == (len(h.T),):
-            for j in range(len(unique)):
-                numbers_1[unique[j]] = int(numbers[j])
+        if np.shape(h) == (len(h.T),):   #NO mutations
+            for j in range(len(strategies)):
+                numbers_1[strategies[j]] = int(numbers[j])
                 average_1[strategies[j]] = average_results[j]
 
         else:
-            for j in range(len(unique.T)):
+            for j in range(len(strategies.T)):   #YES mutations
                 for k in range(len(s_ref)):
-                    if np.all(s_ref[k] == unique[:,j]):
+                    if np.all(s_ref[k] == strategies[:,j]):
                         ind = k
                 numbers_1[ind] = int(numbers[j])
                 average_1[ind] = average_results[j]
@@ -193,7 +172,6 @@ def tournament(h,f,s,it=None):
         n_matrix[i] = numbers_1
         val_matrix[i] = average_1
 
-        h, new_strat = update[f](h,strategies,average_results,s,s_ref)
-        print(h)
+        h, new_strat = update[f](h,strategies,average_results,s,s_ref,mutation_prob,n_change)
 
     return n_matrix, val_matrix
