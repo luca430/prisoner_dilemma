@@ -9,18 +9,21 @@ strat = {'nice': partial(st.nice_guy),
         'bad': partial(st.bad_guy), 
         'm_nice': partial(st.mainly_nice),
         'm_bad': partial(st.mainly_bad),
-        'tit_tat': partial(st.tit_tat)}
+        'tit_tat': partial(st.tit_tat),
+        'random': partial(st.random),
+        'pavlov': partial(st.pavlov),
+        'f_tit_tat': partial(st.f_tit_tat)}
 
 update = {'update_1': partial(up.update_1),
-        'update_1rand': partial(up.update_1rand),
-        'update_2': partial(up.update_2)}
+        'update_2': partial(up.update_2),
+        'update_3': partial(up.update_3)}
 
-def mutation(q, pq, i, w):
+def mutation(q, pq, i, w1, w2, w3):
 
     if npr.random() < pq:
-        return strat['nice'](i,w)
+        return strat['nice'](i,w1,w2,w3)
     else:
-        return strat[q](i,w)
+        return strat[q](i,w1,w2,w3)
 
 def fight(f,g,probf=0,probg=0,N=None,graph=False):
 
@@ -29,17 +32,17 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
     R, S, T, P = 3, 0, 5, 1
     M = np.array([[R,S],[T,P]])
 
-    p1, p2 = [-1], [-1]
-    for i in range(1,N+1):
+    p1, p2 = [-1,-1], [-1,-1]
+    for i in range(2,N+2):
         if probf == 0 and probg == 0:
-            p1.append(strat[f](i,p2[i-1]))
-            p2.append(strat[g](i,p1[i-1]))
+            p1.append(strat[f](i,p2[i-1],p1[i-1],p2[i-2]))
+            p2.append(strat[g](i,p1[i-1],p2[i-1],p1[i-2]))
         else:
-            p1.append(mutation(f,probf,i,p2[i-1]))
-            p2.append(mutation(g,probg,i,p1[i-1]))
+            p1.append(mutation(f,probf,i,p2[i-1],p1[i-1],p2[i-2]))
+            p2.append(mutation(g,probg,i,p1[i-1],p2[i-1],p1[i-2]))
 
-    p1 = np.array(p1[1:]).T
-    p2 = np.array(p2[1:]).T
+    p1 = np.array(p1[2:]).T
+    p2 = np.array(p2[2:]).T
 
     result_1 = np.cumsum([np.dot(p1[:,i].T,np.dot(M,p2[:,i])) for i in range(N)])
     result_2 = np.cumsum([np.dot(p2[:,i].T,np.dot(M,p1[:,i])) for i in range(N)])
@@ -130,7 +133,7 @@ def round_robin(h,s,ord=False):
 def tournament(h,f,s,it=None,mutation_prob=None,n_change=None):
     
     if it == None: it = 100
-    s_ref = [[0,0],[1,0],[2,0],[3,0],[4,0]]
+    s_ref = [[i,0] for i in range(len(s))]
 
     new_strat = 0
     n_matrix = np.zeros([it,len(s)])  #matrice per salvare il numero di strat per it
