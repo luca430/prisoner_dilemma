@@ -47,11 +47,11 @@ def update_2(h,strat,av,s,s_ref):
             else:
                 if len(strat)<3: w=0
                 else: w=npr.randint(2)
-                k=np.where(h==strat[w])[0]
+                k=np.where(h==strat[w])[0] #???
                 if len(k)<1:break
-                else:h[k[0]]=strat[-npr.randint(2)-1]
+                else:h[k[0]]=strat[-w-1]
     
-    else:                       #caso con mutazione
+    else:                          #caso con mutazione
         for i in range(3):
             if len(av)<1:break
             else:
@@ -59,7 +59,7 @@ def update_2(h,strat,av,s,s_ref):
                 else: w=npr.randint(2)
                 k=np.where(h[0]==strat[w])[0]
                 if len(k)<1:break
-                else:h[0,k[0]]=strat[-npr.randint(2)-1]
+                else:h[0,k[0]]=strat[-w-1]
 
         for i in range(len(h)):
             if npr.random() < p_mut:

@@ -192,6 +192,5 @@ def tournament(h,f,s,it=None):
         val_matrix[i] = average_1
 
         h, new_strat = update[f](h,strategies,average_results,s,s_ref)
-        print(h)
 
     return n_matrix, val_matrix
