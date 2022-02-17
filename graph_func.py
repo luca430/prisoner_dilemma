@@ -21,12 +21,12 @@ def gif(s,population,file_name,colors):
     filenames = []
     for index, y in enumerate(coordinates_lists):
         # plot charts
-        plt.figure(figsize=(8,6.5))
+        plt.figure(figsize=(11,9.5))
         plt.barh(x[index], y, color=x_colors[index])
-        plt.xlim(0,np.max(population)+3)
+        plt.xlim(0,np.max(population)*(1+1/7))
         plt.xlabel('Population', fontsize=15)
         plt.title('Population growth',fontsize=18)
-        plt.text(np.max(population)-10, 0.1, f'iteration{index}',fontsize=15)
+        plt.text(np.max(population), 0.1, f'iteration{index}',fontsize=12)
 
         for i, v in enumerate(y):
             if int(v) == 0: plt.text(v + 0.5 , i, str(int(v)), color='red', fontweight='bold')
@@ -100,20 +100,6 @@ def graph_avarege(h,s_colors,val_ma,s,iterations):
             ax.plot(np.arange(iterations),val_ma_graph.T[i],label=s[i],color=s_colors[i])
         ax.set_title('Average points without mutation strategies',fontsize=14)
     else:#caso mutazioni
-        s_mut = s[14:]
-        for i in range(len(s_mut)):
-            check_s_1 = s_mut[i][:-2]
-            check_s_2 = s_mut[i][:-3]
-            for j in range(len(s)):
-                if s[j] == check_s_1:
-                    shade = [col for col in sns.light_palette(s_colors[j],n_colors=100,reverse=True)]
-                    s_2 = [l for l in s_mut[i]]
-                    s_colors.append(shade[int(s_2[-1])])
-            for j in range(len(s)):
-                if s[j] == check_s_2:
-                    shade = [col for col in sns.light_palette(s_colors[j],n_colors=100,reverse=True)]
-                    s_2 = [l for l in s_mut[i]]
-                    s_colors.append(shade[int(s_2[-2] + s_2[-1])])
         for i in range(len(val_ma.T)):
             k=np.where(val_ma.T[i]==0)[0]
             if len(k)>0:
@@ -163,3 +149,19 @@ def graph_population(n_ma,iterations,s,s_colors):
     plt.gca().spines["left"].set_alpha(.3)
     plt.show()
     return
+
+def up_color(s,s_colors):
+    s_mut = s[14:] #solo mutazioni di s
+    for i in range(len(s_mut)):
+        check_s_1 = s_mut[i][:-2]
+        check_s_2 = s_mut[i][:-3]
+        for j in range(len(s)):
+            if s[j] == check_s_1:
+                shade = [col for col in sns.light_palette(s_colors[j],n_colors=100,reverse=True)]
+                s_2 = [l for l in s_mut[i]]
+                s_colors.append(shade[int(s_2[-1])])
+            if s[j] == check_s_2:
+                shade = [col for col in sns.light_palette(s_colors[j],n_colors=100,reverse=True)]
+                s_2 = [l for l in s_mut[i]]
+                s_colors.append(shade[int(s_2[-2] + s_2[-1])])
+    return s_colors
