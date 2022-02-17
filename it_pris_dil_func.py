@@ -11,12 +11,19 @@ strat = {'nice': partial(st.nice_guy),
         'm_bad': partial(st.mainly_bad),
         'tit_tat': partial(st.tit_tat),
         'random': partial(st.random),
+        'grim': partial(st.grim),
+        'f_tit_tat': partial(st.f_tit_tat),
+        'sus_tit_tat': partial(st.sus_tit_tat),
         'pavlov': partial(st.pavlov),
-        'f_tit_tat': partial(st.f_tit_tat)}
+        'reactive_nice': partial(st.reactive_nice),
+        'reactive_bad': partial(st.reactive_bad),
+        'hard_joss': partial(st.hard_joss),
+        'soft_joss': partial(st.soft_joss)}
 
 update = {'update_1': partial(up.update_1),
         'update_2': partial(up.update_2),
-        'update_3': partial(up.update_3)}
+        'update_3': partial(up.update_3),
+        'update_4': partial(up.update_4)}
 
 def mutation(q, pq, i, w1, w2, w3):
 
