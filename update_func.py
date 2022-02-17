@@ -7,6 +7,12 @@ def lin1_icdf(x,l):
 def lin2_icdf(x,l):
     return np.sqrt(x)/l
 
+def expon1_icdf(x,l):
+    return -np.log(x*(np.exp(-l)-1)-1)
+
+def expon2_icdf(x,l):
+    return np.log(x*(np.exp(l)-1)-1)
+
 def update_1(h,strat,av): #taglia la testa al toro
 
     h1 = []
@@ -177,6 +183,8 @@ def update_4(h,strat,av,s,s_ref,p_mut = None,change=None):
                         if x2 <= prob_vec_2[j]:                    #selects the strategy that is going to reproduce
                             w2 = j + w1 +1
                             break
+                        
+                    if w2 == len(av): w2-=1
                             
                 if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
                     k=np.where(h==strat[w1])[0]
@@ -210,6 +218,125 @@ def update_4(h,strat,av,s,s_ref,p_mut = None,change=None):
                         if x2 <= prob_vec_2[j]:                    #selects the strategy that is going to reproduce
                             w2 = j + w1 +1
                             break
+                        
+                    if w2 == len(av): w2-=1
+                            
+                if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
+                    k = -1
+                    for i in range(len(h[0])):
+                        if np.all(h[:,i] == strat[:,w1]):
+                            k = i
+                            break
+                    if k<0: break
+                    else:
+                        h[:,k]=strat[:,w2]
+
+        for i in range(len(h)):
+            if npr.random() < p_mut:
+                #h[1,i] = npr.poisson(lam=0.01)
+                h[1,i] = round(npr.random(),2)
+                if h[1,i] > 1: h[1,i] = 1
+                new_strat += 1
+                s.append('{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100)))
+                s_ref.append(h[:,i])
+
+    return h, new_strat
+
+def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
+                                              #assign a probability to be killed and to be reproduced to every strategy based on 
+    if p_mut == None: p_mut = 0               #its score
+    if change == None: change = 1
+    
+    h = np.array(h)
+    new_strat = 0
+    
+    uni = np.unique(av)
+    
+    if np.shape(h) == (len(h.T),): #caso senza mutazione
+        for i in range(change):
+            if len(strat)<=1:break
+            else:
+                if len(strat)<3: 
+                    w1=0
+                    w2=-1
+                elif len(uni) != 1:
+                    w1,w2 = 0,-1
+                    
+                    prob_vec_inv = av[-1] - av
+                    prob_vec_inv = prob_vec_inv/np.sum(prob_vec_inv)        #assign probabilities based on the % of the score
+                    prob_vec_inv = np.flip(prob_vec_inv)
+                    prob_vec1 = np.zeros(len(prob_vec_inv))
+                    prob_vec1[0] = prob_vec_inv[0]                            #build the cumulative prob vector
+                    for i in range(1,len(prob_vec_inv)):
+                        prob_vec1[i]=prob_vec1[i-1]+prob_vec_inv[i]
+                        
+                    x1,x2 = npr.random(),npr.random()
+                    
+                    for j in range(len(prob_vec1)):           #selects the strategy to kill based on probabilities
+                        if x1 < prob_vec1[j]:
+                            w1 = len(prob_vec1)-1-j
+                            break
+                            
+                    prob_vec = av[w1:]-av[w1]      #build the other probability vector
+                    prob_vec = prob_vec/np.sum(prob_vec)
+                    prob_vec2 = np.zeros(len(prob_vec))
+                    prob_vec2[0] = prob_vec[0]    
+                    for j in range(1,len(prob_vec)):
+                        prob_vec2[j]=prob_vec[j]+prob_vec2[j-1]
+                    
+                    for j in range(len(prob_vec2)):
+                        if x2 < prob_vec2[j]:                    #selects the strategy that is going to reproduce
+                            w2 = j + w1
+                            break
+                     
+                    if w2 == len(av): w2-=1
+                else: w1,w2 = 0,0
+                            
+                if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
+                    k=np.where(h==strat[w1])[0]
+                    if len(k)<1:break
+                    elif len(strat) == 1: break
+                    else:h[k[0]]=strat[w2]
+    
+    else:                       #caso con mutazione
+        for i in range(change):
+            if len(strat.T)<=1: break
+            else:
+                if len(strat.T)<3: 
+                    w1=0
+                    w2=-1
+                elif len(uni) != 1: 
+                    w1,w2 = 0,-1
+                    
+                    prob_vec_inv = av[-1] - av
+                    prob_vec_inv = prob_vec_inv/np.sum(prob_vec_inv)        #assign probabilities based on the % of the score
+                    prob_vec_inv = np.flip(prob_vec_inv)
+                    prob_vec1 = np.zeros(len(prob_vec_inv))
+                    prob_vec1[0] = prob_vec_inv[0]                            #build the cumulative prob vector
+                    for i in range(1,len(prob_vec_inv)):
+                        prob_vec1[i]=prob_vec1[i-1]+prob_vec_inv[i]
+                        
+                    x1,x2 = npr.random(),npr.random()
+                    
+                    for j in range(len(prob_vec1)):           #selects the strategy to kill based on probabilities
+                        if x1 < prob_vec1[j]:
+                            w1 = len(prob_vec1)-1-j
+                            break
+                            
+                    prob_vec = av[w1:]-av[w1]      #build the other probability vector
+                    prob_vec = prob_vec/np.sum(prob_vec)
+                    prob_vec2 = np.zeros(len(prob_vec))
+                    prob_vec2[0] = prob_vec[0]    
+                    for j in range(1,len(prob_vec)):
+                        prob_vec2[j]=prob_vec[j]+prob_vec2[j-1]
+                    
+                    for j in range(len(prob_vec2)):
+                        if x2 < prob_vec2[j]:                    #selects the strategy that is going to reproduce
+                            w2 = j + w1
+                            break
+                     
+                    if w2 == len(av): w2-=1
+                else: w1,w2 = 0,0
                             
                 if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
                     k = -1

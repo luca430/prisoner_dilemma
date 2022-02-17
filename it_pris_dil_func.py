@@ -23,7 +23,8 @@ strat = {'nice': partial(st.nice_guy),
 update = {'update_1': partial(up.update_1),
         'update_2': partial(up.update_2),
         'update_3': partial(up.update_3),
-        'update_4': partial(up.update_4)}
+        'update_4': partial(up.update_4),
+        'update_5': partial(up.update_5)}
 
 def mutation(q, pq, i, w1, w2, w3):
 
