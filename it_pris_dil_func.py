@@ -15,15 +15,8 @@ strat = {'nice': partial(st.nice_guy),
         'f_tit_tat': partial(st.f_tit_tat)}
 
 update = {'update_1': partial(up.update_1),
-<<<<<<< HEAD
-        'update_1rand': partial(up.update_1rand),
         'update_2': partial(up.update_2),
         'update_3': partial(up.update_3)}
-
-=======
-        'update_2': partial(up.update_2),
-        'update_3': partial(up.update_3)}
->>>>>>> upstream/main
 
 def mutation(q, pq, i, w1, w2, w3):
 
