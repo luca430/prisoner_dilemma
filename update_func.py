@@ -28,13 +28,9 @@ def update_2(h,strat,av,s,s_ref,p_mut = None,change=None):
         for i in range(change):
             if len(strat) <= 1: break
             else:
-<<<<<<< HEAD
-                if len(strat)<3: w1,w2=0,-1
-=======
                 if len(strat) < 3:
                     w1 = 0
                     w2 = -1
->>>>>>> upstream/main
                 else: 
                     w1 = npr.randint(int(len(strat)/2))
                     w2 = npr.randint(int(len(strat)/2),int(len(strat)))

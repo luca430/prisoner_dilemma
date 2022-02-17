@@ -81,14 +81,21 @@ n_ma3, val_ma3 = pris_dil.tournament(h,'update_2',s,it=iterations)
 
 val_ma_graph = np.copy(val_ma3)
 val_ma_graph[val_ma_graph == 0] = np.nan
+
+s_colors = ['lime','red','cyan','saddlebrown','darkslategray','olive',
+            'purple','navy','darkviolet','gold','darkgreen','darkorange',
+            'royalblue','hotpink']
+
+
 fig3, (ax1,ax2) = plt.subplots(nrows=1,ncols=2,figsize=(15,5))
 for i in range(len(s)):
     ax2.plot(0,val_ma_graph.T[i,0],'o',color='green')
     for j in range(len(val_ma_graph.T[i])):
         if np.isnan(val_ma_graph.T[i,j])==True: 
             ax2.plot(np.arange(iterations)[j-1],val_ma_graph.T[i,j-1],'x',color='red',markeredgewidth=2)
-    ax1.plot(np.arange(iterations),n_ma3.T[i])
-    ax2.plot(np.arange(iterations),val_ma_graph.T[i],label=s[i])
+    ax1.plot(np.arange(iterations),n_ma3.T[i],color=s_colors[i])
+    ax2.plot(np.arange(iterations),val_ma_graph.T[i],label=s[i],color=s_colors[i])
+
 
 ax1.set_title('Population') 
 ax2.set_title('Average points')
