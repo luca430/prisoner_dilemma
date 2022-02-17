@@ -9,13 +9,14 @@ import it_pris_dil_func as pris_dil
 import seaborn as sns
 
 
-def graph_bar(s_unique,media,s):
+def graph_bar(media,unique,s):
     
     col = ['lime','red','cyan','saddlebrown','darkslategray','olive',
             'purple','navy','darkviolet','gold','darkgreen','darkorange',
             'royalblue','hotpink']
+    col_1=[col[val] for val in unique]
     
-    #col=[i for i in sns.color_palette("flare",n_colors=len(s)) ] 
+    #col=[i for i in sns.color_palette("flare",n_colors=len(s_unique)) ] 
     
     def autolabel(rects):
         for idx,rect in enumerate(plot_bar):
@@ -28,8 +29,8 @@ def graph_bar(s_unique,media,s):
     font = {'family': 'monospace',
             'color':  'black',
             'weight': 'medium'}
-        
-    plot_bar=plt.bar(s_unique,media,color=col,width=0.8)
+    s_unique = [s[val] for val in unique]   
+    plot_bar=plt.bar(s_unique,media,color=col_1,width=0.8)
     
     return autolabel(plot_bar)
 
