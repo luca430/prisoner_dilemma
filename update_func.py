@@ -229,7 +229,6 @@ def update_4(h,strat,av,s,s_ref,p_mut = None,change=None):
 
         for i in range(len(h)):
             if npr.random() < p_mut:
-                #h[1,i] = npr.poisson(lam=0.01)
                 h[1,i] = round(npr.random(),2)
                 if h[1,i] > 1: h[1,i] = 1
                 new_strat += 1
