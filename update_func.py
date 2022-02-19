@@ -1,19 +1,6 @@
 import numpy as np
 import numpy.random as npr
 
-
-def lin1_icdf(x,l):
-    return l - (2/l)*np.sqrt(1-x)
-
-def lin2_icdf(x,l):
-    return np.sqrt(x)/l
-
-def expon1_icdf(x,l):
-    return -np.log(x*(np.exp(-l)-1)-1)
-
-def expon2_icdf(x,l):
-    return np.log(x*(np.exp(l)-1)-1)
-
 def update_1(h,strat,av): #taglia la testa al toro
 
     h1 = []
