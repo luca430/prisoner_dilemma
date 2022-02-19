@@ -4,6 +4,9 @@ import update_func as up
 import numpy as np
 import numpy.random as npr
 import matplotlib.pyplot as plt
+from matplotlib import colors
+from matplotlib.ticker import AutoMinorLocator
+import matplotlib.image as mpimg
 
 strat = {'nice': partial(st.nice_guy),
         'bad': partial(st.bad_guy), 
@@ -33,7 +36,7 @@ def mutation(q, pq, i, w1, w2, w3):
     else:
         return strat[q](i,w1,w2,w3)
 
-def fight(f,g,probf=0,probg=0,N=None,graph=False):
+def fight(f,g,probf=0,probg=0,N=None,graph=False,step_by_step=False):
 
     if N == None: N = 100
             
@@ -55,14 +58,61 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
     result_1 = np.cumsum([np.dot(p1[:,i].T,np.dot(M,p2[:,i])) for i in range(N)])
     result_2 = np.cumsum([np.dot(p2[:,i].T,np.dot(M,p1[:,i])) for i in range(N)])
 
-    if graph == True:
-        plt.xlabel('iteration')
-        plt.ylabel('points')
-        plt.plot(result_1, label=f)
-        plt.plot(result_2, label=g)
-        plt.legend()
+    if step_by_step == True:
+        if graph == True:
+            data = np.array([p1[0],p2[0]])
+            # create discrete colormap
+            cmap = colors.ListedColormap(['red', 'green'])
+            bounds = [0,0.5,1]
+            norm = colors.BoundaryNorm(bounds, cmap.N)
 
-    return [result_1[-1], result_2[-1]]
+            fig, ax = plt.subplots(figsize=(15,8))
+            ax.imshow(data, cmap=cmap, norm=norm)
+
+            # draw gridlines
+            ax.grid(which='minor', axis='both', linestyle='-', color='k', linewidth=1)
+            if N <= 20: ticks = 1
+            elif N > 20 and N <= 50: ticks = 5
+            else: ticks = 10 
+            ax.set_xlabel('iteration')
+            ax.set_xticks(np.arange(0, N, ticks));
+            ax.set_yticks(np.arange(0, 2, 1));
+            ax.set_yticklabels([f,g]);
+            minor_locator = AutoMinorLocator(2)
+            plt.gca().xaxis.set_minor_locator(minor_locator)
+            minor_locator = AutoMinorLocator(2)
+            plt.gca().yaxis.set_minor_locator(minor_locator)
+
+            plt.show()
+
+            '''fig, ax = plt.subplots(2,N,figsize=(15,8))
+            fig.subplots_adjust(hspace=0,wspace=0)
+
+            for j in range(N):
+                ax[0,j].xaxis.set_major_locator(plt.NullLocator())
+                ax[0,j].yaxis.set_major_locator(plt.NullLocator())
+                ax[1,j].xaxis.set_major_locator(plt.NullLocator())
+                ax[1,j].yaxis.set_major_locator(plt.NullLocator())
+                if p1[0,j] == 0: ax[0,j].imshow(mpimg.imread('defeat.png'))
+                else: ax[0,j].imshow(mpimg.imread('collaborate.png'))
+                if p2[0,j] == 0: ax[1,j].imshow(mpimg.imread('defeat.png'))
+                else: ax[1,j].imshow(mpimg.imread('collaborate.png'))'''
+
+            plt.show()
+
+        return   result_1, result_2
+
+    else:
+        if graph == True:
+            plt.figure(figsize=(15.5,7))
+            plt.xlabel('iteration')
+            plt.ylabel('points')
+            plt.plot(result_1, label=f)
+            plt.plot(result_2, label=g)
+            plt.legend()
+            plt.show()
+
+        return result_1[-1], result_2[-1]
 
 def r_r(h,s):
 
