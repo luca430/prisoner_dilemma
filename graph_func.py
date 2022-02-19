@@ -6,7 +6,47 @@ import seaborn as sns
 import imageio as io
 import os
 
-def gif(s,population,file_name,colors):
+s_colors = {'nice': 'lime',
+        'bad': 'red', 
+        'm_nice': 'cyan',
+        'm_bad': 'saddlebrown',
+        'tit_tat': 'darkslategray',
+        'random': 'olive',
+        'grim': 'purple',
+        'f_tit_tat': 'navy',
+        'sus_tit_tat': 'darkviolet',
+        'pavlov': 'gold',
+        'reactive_nice': 'darkgreen',
+        'reactive_bad': 'darkorange',
+        'hard_joss': 'royalblue',
+        'soft_joss': 'hotpink'}
+
+def up_color(s,start_s):
+    
+    colors = [s_colors[s[i]] for i in range(start_s)]
+    s_mut = s[start_s:] #solo mutazioni di s
+    for i in range(len(s_mut)):
+        check_s_1 = s_mut[i][:-2]
+        check_s_2 = s_mut[i][:-3]
+        for j in range(len(s)):
+            if s[j] == check_s_1:
+                shade = [col for col in sns.light_palette(colors[j],n_colors=100,reverse=True)]
+                s_2 = [l for l in s_mut[i]]
+                colors.append(shade[int(s_2[-1])])
+            if s[j] == check_s_2:
+                shade = [col for col in sns.light_palette(colors[j],n_colors=100,reverse=True)]
+                s_2 = [l for l in s_mut[i]]
+                colors.append(shade[int(s_2[-2] + s_2[-1])])
+    return colors
+
+def gif(s,population,file_name,start_s=None):
+    
+    if start_s == None:
+        colors = [s_colors[val] for val in s]
+    else:
+        colors = [s_colors[s[i]] for i in range(start_s)]
+        colors = up_color(s,start_s)
+        
     x = []
     x_colors = []
     coordinates_lists = np.zeros((len(population),len(s)))
@@ -59,8 +99,8 @@ def gif(s,population,file_name,colors):
         os.remove(filename)
     return
 
-def graph_bar(media,unique,s,col):
-    
+def graph_bar(media,unique,s):
+    col = [s_colors[val] for val in s]
     col_1=[col[val] for val in unique]
     
     #col=[i for i in sns.color_palette("flare",n_colors=len(s_unique)) ] 
@@ -83,8 +123,14 @@ def graph_bar(media,unique,s,col):
     
     return autolabel(plot_bar)
 
-def graph_avarege(h,s_colors,val_ma,s,iterations):
+def graph_avarege(h,val_ma,s,iterations,start_s=None):
     
+    if start_s == None:
+        colors = [s_colors[val] for val in s]
+    else:
+        colors = [s_colors[s[i]] for i in range(start_s)]
+        colors = up_color(s,start_s)
+        
     val_ma_graph = np.copy(val_ma)
     val_ma_graph[val_ma_graph == 0] = np.nan
     
@@ -97,7 +143,7 @@ def graph_avarege(h,s_colors,val_ma,s,iterations):
             for j in range(len(val_ma_graph.T[i])):
                 if np.isnan(val_ma_graph.T[i,j])==True: 
                     ax.plot(np.arange(iterations)[j-1],val_ma_graph.T[i,j-1],'x',color='red',markeredgewidth=2)
-            ax.plot(np.arange(iterations),val_ma_graph.T[i],label=s[i],color=s_colors[i])
+            ax.plot(np.arange(iterations),val_ma_graph.T[i],label=s[i],color=colors[i])
         ax.set_title('Average points without mutation strategies',fontsize=14)
     else:#caso mutazioni
         for i in range(len(val_ma.T)):
@@ -128,7 +174,7 @@ def graph_avarege(h,s_colors,val_ma,s,iterations):
             ax.plot(np.arange(iterations)[-1],
                      val_ma_graph.T[i,-1],'x',color='red',markeredgewidth=2)#caso nati all'inizio non morti
             ax.plot(np.arange(iterations),
-                     val_ma_graph.T[i],label=s[i],color=s_colors[i])
+                     val_ma_graph.T[i],label=s[i],color=colors[i])
         ax.set_title('Average points mutation strategies',fontsize=14)
     
     ax.set_xlabel('Iteration')
@@ -137,9 +183,16 @@ def graph_avarege(h,s_colors,val_ma,s,iterations):
     plt.show()
     return
     
-def graph_population(n_ma,iterations,s,s_colors):
+def graph_population(n_ma,iterations,s,start_s=None):
+    
+    if start_s == None:
+        colors = [s_colors[val] for val in s]
+    else:
+        colors = [s_colors[s[i]] for i in range(start_s)]
+        colors = up_color(s,start_s)
+    
     fig,ax=plt.subplots(figsize=(15,8.5))
-    ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=s_colors);
+    ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=colors);
     fig.legend(loc='center right')
     plt.xlim(range(iterations)[0],range(iterations)[-1])
     ax.set_title('Population') 
@@ -149,19 +202,3 @@ def graph_population(n_ma,iterations,s,s_colors):
     plt.gca().spines["left"].set_alpha(.3)
     plt.show()
     return
-
-def up_color(s,s_colors):
-    s_mut = s[14:] #solo mutazioni di s
-    for i in range(len(s_mut)):
-        check_s_1 = s_mut[i][:-2]
-        check_s_2 = s_mut[i][:-3]
-        for j in range(len(s)):
-            if s[j] == check_s_1:
-                shade = [col for col in sns.light_palette(s_colors[j],n_colors=100,reverse=True)]
-                s_2 = [l for l in s_mut[i]]
-                s_colors.append(shade[int(s_2[-1])])
-            if s[j] == check_s_2:
-                shade = [col for col in sns.light_palette(s_colors[j],n_colors=100,reverse=True)]
-                s_2 = [l for l in s_mut[i]]
-                s_colors.append(shade[int(s_2[-2] + s_2[-1])])
-    return s_colors
