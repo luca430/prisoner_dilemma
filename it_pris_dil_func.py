@@ -26,14 +26,14 @@ update = {'update_1': partial(up.update_1),
         'update_4': partial(up.update_4),
         'update_5': partial(up.update_5)}
 
-def mutation(q, pq, i, w1, w2, w3):
+def mutation(player,gene,it,u,v,u2):
 
-    if npr.random() < pq:
-        return strat['nice'](i,w1,w2,w3)
+    if npr.random() < gene:
+        return [1,0]
     else:
-        return strat[q](i,w1,w2,w3)
+        return strat[player](it,u,v,u2)
 
-def fight(f,g,probf=0,probg=0,N=None,graph=False):
+def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False):
 
     if N == None: N = 100
             
@@ -42,12 +42,12 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
 
     p1, p2 = [-1,-1], [-1,-1]
     for i in range(2,N+2):
-        if probf == 0 and probg == 0:
-            p1.append(strat[f](i,p2[i-1],p1[i-1],p2[i-2]))
-            p2.append(strat[g](i,p1[i-1],p2[i-1],p1[i-2]))
+        if prob1 == 0 and prob2 == 0:
+            p1.append(strat[player1](i,p2[i-1],p1[i-1],p2[i-2]))
+            p2.append(strat[player2](i,p1[i-1],p2[i-1],p1[i-2]))
         else:
-            p1.append(mutation(f,probf,i,p2[i-1],p1[i-1],p2[i-2]))
-            p2.append(mutation(g,probg,i,p1[i-1],p2[i-1],p1[i-2]))
+            p1.append(mutation(player1,prob1,i,p2[i-1],p1[i-1],p2[i-2]))
+            p2.append(mutation(player2,prob2,i,p1[i-1],p2[i-1],p1[i-2]))
 
     p1 = np.array(p1[2:]).T
     p2 = np.array(p2[2:]).T
@@ -58,16 +58,16 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
     if graph == True:
         plt.xlabel('iteration')
         plt.ylabel('points')
-        plt.plot(result_1, label=f)
-        plt.plot(result_2, label=g)
+        plt.plot(result_1, label=player1)
+        plt.plot(result_2, label=player2)
         plt.legend()
 
-    return [result_1[-1], result_2[-1]]
+    return result_1[-1], result_2[-1]
 
 def r_r(h,s):
 
     N = len(h)
-    partecipants = [s[int(i)] for i in h] #h ma con i nomi
+    partecipants = [s[int(i)] for i in h]
 
     result = np.zeros((N,N))
     somma = np.zeros(N)
@@ -99,7 +99,7 @@ def r_r_m(h,s):
     somma = np.zeros(N)
     for i in range(N):
         for j in range(i+1,N):
-            p1, p2 = fight(partecipants[i],partecipants[j], probf=h[1,i], probg=h[1,j])
+            p1, p2 = fight(partecipants[i],partecipants[j], prob1=h[1,i], prob2=h[1,j])
             result[i,j] = p1
             result[j,i] = p2
 
@@ -138,33 +138,34 @@ def round_robin(h,s,ord=False):
             u[1] = u[1,sort]    #sort second row
     return u, m, n
 
-def tournament(h,f,s,it=None,mutation_prob=None,n_change=None):
+def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
     
     if it == None: it = 100
     s_ref = [[i,0] for i in range(len(s))]
 
     new_strat = 0
-    n_matrix = np.zeros([it,len(s)])  #matrice per salvare il numero di strat per it
-    val_matrix = np.zeros([it,len(s)])  #matrice per salvare il punteggio medio di una strat per it
+    n_matrix = np.zeros([it,len(s)])                   #matrix of the number of strategies at each iteration
+    val_matrix = np.zeros([it,len(s)])                 #matrix of the average scores at each iteration
     new_col = np.zeros((it,1))
 
     for i in range(it):    
         strategies, average_results, numbers = round_robin(h,s,ord=True)
-        for j in range(new_strat):
-            n_matrix = np.hstack((n_matrix,new_col))
+        
+        for j in range(new_strat):                     #adds a new column to n_matrix and val_matrix 
+            n_matrix = np.hstack((n_matrix,new_col))   #for each new strategy born in the previous iteration
             val_matrix = np.hstack((val_matrix,new_col))
 
         numbers_1 = np.zeros(len(n_matrix.T))
         average_1 = np.zeros(len(n_matrix.T))
 
-        if np.shape(h) == (len(h.T),):   #NO mutations
+        if np.shape(h) == (len(h.T),):                 #NO mutations
             for j in range(len(strategies)):
                 numbers_1[strategies[j]] = int(numbers[j])
                 average_1[strategies[j]] = average_results[j]
 
         else:
-            for j in range(len(strategies.T)):   #YES mutations
-                for k in range(len(s_ref)):
+            for j in range(len(strategies.T)):         #YES mutations
+                for k in range(len(s_ref)):            #new slicing method adapted for 2-dim h
                     if np.all(s_ref[k] == strategies[:,j]):
                         ind = k
                 numbers_1[ind] = int(numbers[j])
@@ -173,6 +174,6 @@ def tournament(h,f,s,it=None,mutation_prob=None,n_change=None):
         n_matrix[i] = numbers_1
         val_matrix[i] = average_1
 
-        h, new_strat = update[f](h,strategies,average_results,s,s_ref,mutation_prob,n_change)
+        h, new_strat = update[update_f](h,strategies,average_results,s,s_ref,mutation_prob,n_change)
 
     return n_matrix, val_matrix
