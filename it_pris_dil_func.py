@@ -36,7 +36,7 @@ def mutation(player,gene,it,u,v,u2):
     else:
         return strat[player](it,u,v,u2)
 
-def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False):
+def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
 
     if N == None: N = 100
             
@@ -65,7 +65,11 @@ def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False):
         plt.plot(result_2, label=player2)
         plt.legend()
 
-    return result_1[-1], result_2[-1]
+    if all_outcome == False:
+        return result_1[-1], result_2[-1]
+
+    else:
+        return result_1[-1], result_2[-1], [player1,p1], [player2,p2]
 
 def r_r(h,s):
 

@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import imageio as io
 import os
+from matplotlib import colors
+from matplotlib.ticker import AutoMinorLocator
 
 s_colors = {'nice': 'lime',
         'bad': 'red', 
@@ -202,3 +204,35 @@ def graph_population(n_ma,iterations,s,start_s=None):
     plt.gca().spines["left"].set_alpha(.3)
     plt.show()
     return
+
+def fight_grid(p1,p2,range=[None,None]):
+
+    if range == [None,None]: range = [0,20]
+    
+    player1 = p1[0]                 
+    player2 = p2[0]
+    outcome1 = np.array(p1[1])
+    outcome2 = np.array(p2[1])
+
+    data = np.array([outcome1[0,range[0]:range[1]],outcome2[0,range[0]:range[1]]])
+    # create discrete colormap
+    cmap = colors.ListedColormap(['red', 'green'])
+    bounds = [0,0.5,1]
+    norm = colors.BoundaryNorm(bounds, cmap.N)
+
+    fig, ax = plt.subplots(figsize=(15,8))
+    ax.imshow(data, cmap=cmap, norm=norm)
+
+    # draw gridlines
+    ax.grid(which='minor', axis='both', linestyle='-', color='k', linewidth=1)
+    ax.set_xlabel('iteration')
+    ax.set_xticks(np.arange(0, range[1]-range[0], 1));
+    ax.set_xticklabels(np.arange(range[0],range[1]));
+    ax.set_yticks(np.arange(0, 2, 1));
+    ax.set_yticklabels([player1,player2]);
+    minor_locator = AutoMinorLocator(2)
+    plt.gca().xaxis.set_minor_locator(minor_locator)
+    minor_locator = AutoMinorLocator(2)
+    plt.gca().yaxis.set_minor_locator(minor_locator)
+
+    plt.show()
