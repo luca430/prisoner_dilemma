@@ -1,8 +1,9 @@
 import numpy as np
 import numpy.random as npr
 
-def update_1(h,strat,av): #taglia la testa al toro
-
+def update_1(h,strat,av,s,s_ref,p_mut = None,change=None): #taglia la testa al toro
+    new_strat = 0
+    h=np.array(h)
     h1 = []
     perc = np.array([av[i]/np.sum(av) for i in range(len(strat))])
 
@@ -14,7 +15,7 @@ def update_1(h,strat,av): #taglia la testa al toro
         if len(h1) > len(h): h1.remove(strat[int(np.where(perc == np.min(perc))[0])])
         elif len(h1) < len(h): h1.append(strat[int(np.where(perc == np.max(perc))[0])])
 
-    return np.sort(np.array(h1))
+    return np.array(h1), new_strat
 
 def update_2(h,strat,av,s,s_ref,p_mut = None,change=None):
 
