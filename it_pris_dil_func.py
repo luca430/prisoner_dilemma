@@ -4,9 +4,11 @@ import update_func as up
 import numpy as np
 import numpy.random as npr
 import matplotlib.pyplot as plt
+
 from matplotlib import colors
 from matplotlib.ticker import AutoMinorLocator
 import matplotlib.image as mpimg
+
 
 strat = {'nice': partial(st.nice_guy),
         'bad': partial(st.bad_guy), 
@@ -36,9 +38,11 @@ def mutation(player,gene,it,u,v,u2):
     else:
         return strat[player](it,u,v,u2)
 
+
 def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
 
-    if N == None: N = 100
+
+    if N == None: N = 10
             
     R, S, T, P = 3, 0, 5, 1
     M = np.array([[R,S],[T,P]])
@@ -65,11 +69,13 @@ def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
         plt.plot(result_2, label=player2)
         plt.legend()
 
+
     if all_outcome == False:
         return result_1[-1], result_2[-1]
 
     else:
         return result_1[-1], result_2[-1], [player1,p1], [player2,p2]
+
 
 def r_r(h,s):
 
@@ -151,12 +157,24 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
     
     if it == None: it = 100
     s_ref = [[i,0] for i in range(len(s))]
+    if np.shape(h) != (len(h.T),):
+        for i in range(len(h[1])):
+            if h[1,i] != 0:
+                check=0
+                string = '{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100))
+                for val in s:
+                    if val == string:
+                        check = 1
+                if check == 0:
+                    s_ref.append(h[:,i])
+                    s.append(string)
+                    
 
     new_strat = 0
     n_matrix = np.zeros([it,len(s)])                   #matrix of the number of strategies at each iteration
     val_matrix = np.zeros([it,len(s)])                 #matrix of the average scores at each iteration
     new_col = np.zeros((it,1))
-
+    count = 0
     for i in range(it):    
         strategies, average_results, numbers = round_robin(h,s,ord=True)
         
@@ -182,7 +200,31 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
 
         n_matrix[i] = numbers_1
         val_matrix[i] = average_1
+        
+        if len(np.unique(average_results)) == 1:
+            count+=1
+            if count == 1: tresh = i
+            if count == int(tresh/10) + 3:
+                break
 
         h, new_strat = update[update_f](h,strategies,average_results,s,s_ref,mutation_prob,n_change)
 
-    return n_matrix, val_matrix
+    n_matrix1 = np.copy(n_matrix[:i,:])
+    val_matrix1 = np.copy(val_matrix[:i,:])
+    return n_matrix1, val_matrix1, i
+
+def h_build(numbers,mutation = False):
+    if mutation == False:
+        h = []
+        for i in range(len(numbers)):
+            for j in range(numbers[i]):
+                h.append(i)
+        return np.array(h)
+    if mutation == True:
+        h = np.zeros((2,np.sum(numbers)))
+        h1 = []
+        for i in range(len(numbers)):
+            for j in range(numbers[i]):
+                h1.append(i)
+        h[0] = h1
+        return np.array(h)
