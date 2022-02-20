@@ -14,7 +14,7 @@ s_colors = {'nice': 'lime',
         'm_bad': 'saddlebrown',
         'tit_tat': 'darkslategray',
         'random': 'olive',
-        'grim': 'purple',
+        'grim': 'crimson',
         'f_tit_tat': 'navy',
         'sus_tit_tat': 'darkviolet',
         'pavlov': 'gold',
@@ -103,27 +103,33 @@ def gif(s,population,file_name,start_s=None):
 
 def graph_bar(media,unique,s):
     col = [s_colors[val] for val in s]
-    col_1=[col[val] for val in unique]
-    
+    col_1=[col[val] for val in unique] 
     #col=[i for i in sns.color_palette("flare",n_colors=len(s_unique)) ] 
     
-    def autolabel(rects):
+    def autolabel(plot_bar,col_1):
         for idx,rect in enumerate(plot_bar):
             height = rect.get_height()
             ax.text(rect.get_x() + rect.get_width()/2.,
-                    0.5*height, media[idx], ha='center',
-                    va='center', rotation=0, fontdict=font)
+                    1.01*height, media[idx], ha='center',
+                    va='bottom', rotation=0, fontdict=font, color='black')
+            
+            if col_1[idx]=='navy' or col_1[idx]=='darkslategray' or col_1[idx]=='darkgreen' or col_1[idx]=='darkviolet':
+                text_col = 'white'
+            else: text_col = 'black'
+            ax.text(rect.get_x() + rect.get_width()/2.,
+                    0.5*height, unique[idx], ha='center',
+                    va='center', rotation=0, fontdict=font, color=text_col)
     
     fig, ax = plt.subplots(figsize=(15.5,7))
     font = {'family': 'sans',
-            'color':  'black',
             'weight': 'heavy',
             'fontsize': 11}
     s_unique = [s[val] for val in unique]   
     plot_bar=ax.bar(s_unique,media,color=col_1,width=0.8)
+    ax.set_ylim(0,np.max(media)*(1+1/5))
     ax.set_title('Average points',fontsize=20)
     
-    return autolabel(plot_bar)
+    return autolabel(plot_bar,col_1)
 
 def graph_avarege(h,val_ma,s,iterations,start_s=None):
     
