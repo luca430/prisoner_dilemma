@@ -257,10 +257,7 @@ def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
         for i in range(change):
             if len(strat)<=1:break
             else:
-                if len(strat)<3: 
-                    w1=0
-                    w2=-1
-                elif len(uni) != 1:
+                if len(uni) != 1:
                     w1,w2 = 0,-1
                     
                     prob_vec_inv = av[-1] - av
@@ -291,7 +288,7 @@ def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
                             break
                      
                     if w2 == len(av): w2-=1
-                else: w1,w2 = 0,0
+                else: break
                             
                 if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
                     k=np.where(h==strat[w1])[0]
@@ -303,10 +300,7 @@ def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
         for i in range(change):
             if len(strat.T)<=1: break
             else:
-                if len(strat.T)<3: 
-                    w1=0
-                    w2=-1
-                elif len(uni) != 1: 
+                if len(uni) != 1: 
                     w1,w2 = 0,-1
                     
                     prob_vec_inv = av[-1] - av
@@ -337,9 +331,10 @@ def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
                             break
                      
                     if w2 == len(av): w2-=1
-                else: w1,w2 = 0,0
+                else: break
                             
-                if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
+                if av[w1] != av[w2]:
+                    #makes sure that I don't replace strategies with the same performance
                     k = -1
                     for i in range(len(h[0])):
                         if np.all(h[:,i] == strat[:,w1]):
