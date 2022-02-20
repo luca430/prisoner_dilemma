@@ -4,6 +4,8 @@ import update_func as up
 import numpy as np
 import numpy.random as npr
 import matplotlib.pyplot as plt
+from sklearn.datasets import fetch_olivetti_faces
+faces = fetch_olivetti_faces().images
 
 strat = {'nice': partial(st.nice_guy),
         'bad': partial(st.bad_guy), 
@@ -33,9 +35,9 @@ def mutation(q, pq, i, w1, w2, w3):
     else:
         return strat[q](i,w1,w2,w3)
 
-def fight(f,g,probf=0,probg=0,N=None,graph=False):
+def fight(f,g,probf=0,probg=0,N=None,graph=False, ):
 
-    if N == None: N = 100
+    if N == None: N = 10
             
     R, S, T, P = 3, 0, 5, 1
     M = np.array([[R,S],[T,P]])
@@ -61,8 +63,8 @@ def fight(f,g,probf=0,probg=0,N=None,graph=False):
         plt.plot(result_1, label=f)
         plt.plot(result_2, label=g)
         plt.legend()
-
-    return [result_1[-1], result_2[-1]]
+    
+    return result_1[-1], result_2[-1]
 
 def r_r(h,s):
 
