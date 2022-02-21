@@ -205,6 +205,7 @@ def graph_population(n_ma,iterations,s,start_s=None):
     fig,ax=plt.subplots(figsize=(14,8.5))
     ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=colors);
     plt.xlim(range(iterations)[0],range(iterations)[-1])
+
     ax.set_title('Population',fontsize=14)
     ax.set_xlabel('Iterations')
     plt.gca().spines["top"].set_alpha(0)
