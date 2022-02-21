@@ -152,10 +152,13 @@ def round_robin(h,s,ord=False):
     return u, m, n
 
 def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
+
+    h = np.array(h)
     
     h=np.array(h)
     if it == None: it = 100
     s_ref = [[i,0] for i in range(len(s))]
+
     if np.shape(h) != (len(h.T),):
         for i in range(len(h[1])):
             if h[1,i] != 0:
@@ -167,7 +170,6 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
                 if check == 0:
                     s_ref.append(h[:,i])
                     s.append(string)
-                    
 
     new_strat = 0
     n_matrix = np.zeros([it,len(s)])                   #matrix of the number of strategies at each iteration

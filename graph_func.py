@@ -131,8 +131,12 @@ def graph_bar(media,unique,n_unique,s):
     
     return autolabel(plot_bar,col_1)
 
+
 def graph_avarege(h,val_ma,s,iterations,start_s=None):
-    h=np.array(h)
+
+    h = np.array(h)
+
+
     if start_s == None:
         colors = [s_colors[val] for val in s]
     else:
@@ -141,8 +145,8 @@ def graph_avarege(h,val_ma,s,iterations,start_s=None):
         
     val_ma_graph = np.copy(val_ma)
     val_ma_graph[val_ma_graph == 0] = np.nan
-    
-    fig, ax = plt.subplots(nrows=1,ncols=1,figsize=(14,6.5))
+  
+    fig, ax = plt.subplots(nrows=1,ncols=1,figsize=(14,8.5))
     
     if np.shape(h) == (len(h.T),): #caso senza mutazione
         for i in range(len(s)):

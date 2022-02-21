@@ -1,10 +1,15 @@
 import numpy as np
 import numpy.random as npr
 
+
 def update_1(h,strat,av,s,s_ref,p_mut = None,change=None): #taglia la testa al toro
     new_strat = 0
     h=np.array(h)
+
+
     h1 = []
+    h = np.array(h)
+    new_strat = 0
     perc = np.array([av[i]/np.sum(av) for i in range(len(strat))])
 
     for i in range(len(strat)):
@@ -17,7 +22,7 @@ def update_1(h,strat,av,s,s_ref,p_mut = None,change=None): #taglia la testa al t
 
     return np.array(h1), new_strat
 
-def update_2(h,strat,av,s,s_ref,p_mut = None,change=None):
+def update_2(h,strat,av,s,s_ref,p_mut=None,change=None):
 
     if p_mut == None: p_mut = 0
     if change == None: change = 1
@@ -141,7 +146,7 @@ def update_3(h,strat,av,s,s_ref,p_mut=None,change=None):
 
     return h, new_strat
 
-def update_4(h,strat,av,s,s_ref,p_mut = None,change=None):
+def update_4(h,strat,av,s,s_ref,p_mut=None,change=None):
                                               #assign a probability to be killed and to be reproduced to every strategy based on 
     if p_mut == None: p_mut = 0               #its score
     if change == None: change = 1
@@ -243,7 +248,7 @@ def update_4(h,strat,av,s,s_ref,p_mut = None,change=None):
 
     return h, new_strat
 
-def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
+def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
                                               #assign a probability to be killed and to be reproduced to every strategy based on 
     if p_mut == None: p_mut = 0               #its score
     if change == None: change = 1
