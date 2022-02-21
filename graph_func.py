@@ -125,7 +125,7 @@ def graph_bar(media,unique,s):
     
     return autolabel(plot_bar)
 
-def graph_avarege(h,val_ma,s,iterations,start_s=None):
+def graph_average(h,val_ma,s,iterations,start_s=None):
     
     if start_s == None:
         colors = [s_colors[val] for val in s]

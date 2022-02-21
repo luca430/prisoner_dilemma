@@ -149,7 +149,20 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
     
     if it == None: it = 100
     s_ref = [[i,0] for i in range(len(s))]
-
+    
+    if np.shape(h) != (len(h.T),):
+        for i in range(len(h[1])):
+            if h[1,i] != 0:
+                check=0
+                string = '{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100))
+                for val in s:
+                    if val == string:
+                        check = 1
+                if check == 0:
+                    s_ref.append(h[:,i])
+                    s.append('{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100)))
+    
+    
     new_strat = 0
     n_matrix = np.zeros([it,len(s)])                   #matrix of the number of strategies at each iteration
     val_matrix = np.zeros([it,len(s)])                 #matrix of the average scores at each iteration
@@ -184,3 +197,10 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
         h, new_strat = update[update_f](h,strategies,average_results,s,s_ref,mutation_prob,n_change)
 
     return n_matrix, val_matrix
+
+def h_build(numbers):
+    h = []
+    for i in range(len(numbers)):
+        for j in range(numbers[i]):
+            h.append(i)
+    return np.array(h)
