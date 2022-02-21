@@ -132,7 +132,7 @@ def graph_bar(media,unique,n_unique,s):
     return autolabel(plot_bar,col_1)
 
 
-def graph_avarege(h,val_ma,s,iterations,start_s=None):
+def graph_average(h,val_ma,s,iterations,start_s=None):
 
     h = np.array(h)
 
@@ -191,7 +191,7 @@ def graph_avarege(h,val_ma,s,iterations,start_s=None):
     
     ax.set_xlabel('Iteration')
     ax.set_ylabel('Average points')
-    fig.legend(loc='center right')
+    #fig.legend(loc='center right')
     plt.show()
     return
     
@@ -205,7 +205,6 @@ def graph_population(n_ma,iterations,s,start_s=None):
     
     fig,ax=plt.subplots(figsize=(14,8.5))
     ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=colors);
-    fig.legend(loc='center right')
     plt.xlim(range(iterations)[0],range(iterations)[-1])
     ax.set_title('Population',fontsize=14)
     ax.set_xlabel('Iterations')
@@ -213,7 +212,11 @@ def graph_population(n_ma,iterations,s,start_s=None):
     plt.gca().spines["bottom"].set_alpha(.3)
     plt.gca().spines["right"].set_alpha(0)
     plt.gca().spines["left"].set_alpha(.3)
+    box=ax.get_position()
+    ax.set_position([box.x0,box.y0,box.width, box.height])
+    ax.legend(loc='center left', bbox_to_anchor=(1, 0.5), prop={'size': 18})
     plt.show()
+  
     return
 
 def fight_grid(p1,p2,range=[None,None]):

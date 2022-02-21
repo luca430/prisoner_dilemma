@@ -155,7 +155,6 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
 
     h = np.array(h)
     
-    h=np.array(h)
     if it == None: it = 100
     s_ref = [[i,0] for i in range(len(s))]
 
@@ -193,6 +192,7 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
 
         else:
             for j in range(len(strategies.T)):         #YES mutations
+                #ind=[k for k in range(len(s_ref)) if  np.all(s_ref[k] == strategies[:,j])]
                 for k in range(len(s_ref)):            #new slicing method adapted for 2-dim h
                     if np.all(s_ref[k] == strategies[:,j]):
                         ind = k

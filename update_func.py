@@ -265,9 +265,7 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
                 if len(uni) != 1:
                     w1,w2 = 0,-1
                     
-                    prob_vec_inv = av[-1] - av
-                    prob_vec_inv = prob_vec_inv/np.sum(prob_vec_inv)        #assign probabilities based on the % of the score
-                    prob_vec_inv = np.flip(prob_vec_inv)
+                    prob_vec_inv = np.flip((av[-1] - av)/np.sum(av[-1] - av)) #assign probabilities based on the % of the score
                     prob_vec1 = np.zeros(len(prob_vec_inv))
                     prob_vec1[0] = prob_vec_inv[0]                            #build the cumulative prob vector
                     for i in range(1,len(prob_vec_inv)):
@@ -279,9 +277,8 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
                         if x1 < prob_vec1[j]:
                             w1 = len(prob_vec1)-1-j
                             break
-                            
-                    prob_vec = av[w1:]-av[w1]      #build the other probability vector
-                    prob_vec = prob_vec/np.sum(prob_vec)
+                                 
+                    prob_vec = (av[w1:]-av[w1])/np.sum(av[w1:]-av[w1]) #build the other probability vector
                     prob_vec2 = np.zeros(len(prob_vec))
                     prob_vec2[0] = prob_vec[0]    
                     for j in range(1,len(prob_vec)):
@@ -307,10 +304,8 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
             else:
                 if len(uni) != 1: 
                     w1,w2 = 0,-1
-                    
-                    prob_vec_inv = av[-1] - av
-                    prob_vec_inv = prob_vec_inv/np.sum(prob_vec_inv)        #assign probabilities based on the % of the score
-                    prob_vec_inv = np.flip(prob_vec_inv)
+                            
+                    prob_vec_inv = np.flip((av[-1] - av)/np.sum(av[-1] - av)) #assign probabilities based on the % of the score
                     prob_vec1 = np.zeros(len(prob_vec_inv))
                     prob_vec1[0] = prob_vec_inv[0]                            #build the cumulative prob vector
                     for i in range(1,len(prob_vec_inv)):
@@ -322,9 +317,8 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
                         if x1 < prob_vec1[j]:
                             w1 = len(prob_vec1)-1-j
                             break
-                            
-                    prob_vec = av[w1:]-av[w1]      #build the other probability vector
-                    prob_vec = prob_vec/np.sum(prob_vec)
+                         
+                    prob_vec = (av[w1:]-av[w1])/np.sum((av[w1:]-av[w1])) #build the other probability vector
                     prob_vec2 = np.zeros(len(prob_vec))
                     prob_vec2[0] = prob_vec[0]    
                     for j in range(1,len(prob_vec)):
