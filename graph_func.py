@@ -136,6 +136,7 @@ def graph_avarege(h,val_ma,s,iterations,start_s=None):
 
     h = np.array(h)
 
+
     if start_s == None:
         colors = [s_colors[val] for val in s]
     else:
@@ -144,7 +145,7 @@ def graph_avarege(h,val_ma,s,iterations,start_s=None):
         
     val_ma_graph = np.copy(val_ma)
     val_ma_graph[val_ma_graph == 0] = np.nan
-    
+  
     fig, ax = plt.subplots(nrows=1,ncols=1,figsize=(14,8.5))
     
     if np.shape(h) == (len(h.T),): #caso senza mutazione
@@ -207,7 +208,7 @@ def graph_population(n_ma,iterations,s,start_s=None):
     fig.legend(loc='center right')
     plt.xlim(range(iterations)[0],range(iterations)[-1])
     ax.set_title('Population',fontsize=14)
-    ax.set_xlabel('Iteration') 
+    ax.set_xlabel('Iterations')
     plt.gca().spines["top"].set_alpha(0)
     plt.gca().spines["bottom"].set_alpha(.3)
     plt.gca().spines["right"].set_alpha(0)

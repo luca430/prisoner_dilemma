@@ -1,7 +1,11 @@
 import numpy as np
 import numpy.random as npr
 
-def update_1(h,strat,av,s,s_ref,p_mut=None,change=None): #taglia la testa al toro
+
+def update_1(h,strat,av,s,s_ref,p_mut = None,change=None): #taglia la testa al toro
+    new_strat = 0
+    h=np.array(h)
+
 
     h1 = []
     h = np.array(h)
