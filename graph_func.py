@@ -101,7 +101,7 @@ def gif(s,population,file_name,start_s=None):
         os.remove(filename)
     return
 
-def graph_bar(media,unique,s):
+def graph_bar(media,unique,n_unique,s):
     col = [s_colors[val] for val in s]
     col_1=[col[val] for val in unique] 
     #col=[i for i in sns.color_palette("flare",n_colors=len(s_unique)) ] 
@@ -117,7 +117,7 @@ def graph_bar(media,unique,s):
                 text_col = 'white'
             else: text_col = 'black'
             ax.text(rect.get_x() + rect.get_width()/2.,
-                    0.5*height, unique[idx], ha='center',
+                    0.5*height, n_unique[idx], ha='center',
                     va='center', rotation=0, fontdict=font, color=text_col)
     
     fig, ax = plt.subplots(figsize=(15.5,7))
@@ -131,10 +131,11 @@ def graph_bar(media,unique,s):
     
     return autolabel(plot_bar,col_1)
 
+
 def graph_average(h,val_ma,s,iterations,start_s=None):
     
     h = np.array(h)
-    
+   
     if start_s == None:
         colors = [s_colors[val] for val in s]
     else:
@@ -205,7 +206,9 @@ def graph_population(n_ma,iterations,s,start_s=None):
     ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=colors);
     fig.legend(loc='center right')
     plt.xlim(range(iterations)[0],range(iterations)[-1])
-    ax.set_title('Population',fontsize=14) 
+
+    ax.set_title('Population',fontsize=14)
+    ax.set_xlabel('Iteration') 
     plt.gca().spines["top"].set_alpha(0)
     plt.gca().spines["bottom"].set_alpha(.3)
     plt.gca().spines["right"].set_alpha(0)
