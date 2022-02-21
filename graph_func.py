@@ -133,9 +133,12 @@ def graph_bar(media,unique,n_unique,s):
 
 
 def graph_average(h,val_ma,s,iterations,start_s=None):
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> upstream/main
     h = np.array(h)
-
 
     if start_s == None:
         colors = [s_colors[val] for val in s]
@@ -206,6 +209,7 @@ def graph_population(n_ma,iterations,s,start_s=None):
     fig,ax=plt.subplots(figsize=(14,8.5))
     ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=colors);
     plt.xlim(range(iterations)[0],range(iterations)[-1])
+
     ax.set_title('Population',fontsize=14)
     ax.set_xlabel('Iterations')
     plt.gca().spines["top"].set_alpha(0)
