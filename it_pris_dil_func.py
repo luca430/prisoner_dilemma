@@ -42,7 +42,7 @@ def mutation(player,gene,it,u,v,u2):
 def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
 
 
-    if N == None: N = 10
+    if N == None: N = 100
             
     R, S, T, P = 3, 0, 5, 1
     M = np.array([[R,S],[T,P]])
