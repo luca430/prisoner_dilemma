@@ -131,10 +131,11 @@ def graph_bar(media,unique,n_unique,s):
     
     return autolabel(plot_bar,col_1)
 
+
 def graph_avarege(h,val_ma,s,iterations,start_s=None):
 
     h = np.array(h)
-    
+
     if start_s == None:
         colors = [s_colors[val] for val in s]
     else:
