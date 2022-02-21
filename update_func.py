@@ -332,7 +332,8 @@ def update_5(h,strat,av,s,s_ref,p_mut = None,change=None):
                     if w2 == len(av): w2-=1
                 else: break
                             
-                if av[w1] != av[w2]:   #makes sure that I don't replace strategies with the same performance
+                if av[w1] != av[w2]:
+                    #makes sure that I don't replace strategies with the same performance
                     k = -1
                     for i in range(len(h[0])):
                         if np.all(h[:,i] == strat[:,w1]):
