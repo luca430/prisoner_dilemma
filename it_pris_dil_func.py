@@ -4,6 +4,7 @@ import update_func as up
 import numpy as np
 import numpy.random as npr
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 
 from matplotlib import colors
 from matplotlib.ticker import AutoMinorLocator
@@ -63,10 +64,12 @@ def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
     result_2 = np.cumsum([np.dot(p2[:,i].T,np.dot(M,p1[:,i])) for i in range(N)])
 
     if graph == True:
+        ax = plt.figure().gca()
         plt.xlabel('iteration')
         plt.ylabel('points')
         plt.plot(result_1, label=player1)
         plt.plot(result_2, label=player2)
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.legend()
 
 
