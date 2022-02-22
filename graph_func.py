@@ -26,7 +26,7 @@ s_colors = {'nice': 'lime',
 def up_color(s,start_s):
     
     colors = [s_colors[s[i]] for i in range(start_s)]
-    s_mut = s[start_s:] #solo mutazioni di s
+    s_mut = s[start_s:]                                 #only mutation of s
     for i in range(len(s_mut)):
         check_s_1 = s_mut[i][:-2]
         check_s_2 = s_mut[i][:-3]
@@ -104,7 +104,6 @@ def gif(s,population,file_name,start_s=None):
 def graph_bar(media,unique,n_unique,s):
     col = [s_colors[val] for val in s]
     col_1=[col[val] for val in unique] 
-    #col=[i for i in sns.color_palette("flare",n_colors=len(s_unique)) ] 
     
     def autolabel(plot_bar,col_1):
         for idx,rect in enumerate(plot_bar):
@@ -133,11 +132,6 @@ def graph_bar(media,unique,n_unique,s):
 
 
 def graph_average(h,val_ma,s,iterations,start_s=None):
-<<<<<<< HEAD
-
-=======
-    
->>>>>>> upstream/main
     h = np.array(h)
 
     if start_s == None:
@@ -151,7 +145,7 @@ def graph_average(h,val_ma,s,iterations,start_s=None):
   
     fig, ax = plt.subplots(nrows=1,ncols=1,figsize=(14,8.5))
     
-    if np.shape(h) == (len(h.T),): #caso senza mutazione
+    if np.shape(h) == (len(h.T),): #NO mutations
         for i in range(len(s)):
             ax.plot(0,val_ma_graph.T[i,0],'o',color='green')
             ax.plot(np.arange(iterations)[-1],val_ma_graph.T[i,-1],'x',color='red',markeredgewidth=2)
@@ -160,41 +154,41 @@ def graph_average(h,val_ma,s,iterations,start_s=None):
                     ax.plot(np.arange(iterations)[j-1],val_ma_graph.T[i,j-1],'x',color='red',markeredgewidth=2)
             ax.plot(np.arange(iterations),val_ma_graph.T[i],label=s[i],color=colors[i])
         ax.set_title('Average points without mutation strategies',fontsize=14)
-    else:#caso mutazioni
+        
+    else:  #YES mutations
         for i in range(len(val_ma.T)):
             k=np.where(val_ma.T[i]==0)[0]
             if len(k)>0:
-                if k.max()==iterations-1: #caso morti prima
+                if k.max()==iterations-1:                                          #case previous death
                     position_1=[k[y]-1 for y in range(1,len(k)) if k[y-1]+1!=k[y]]
                     if k.min()!=0:
                         ax.plot(np.arange(iterations)[k.min()-1],
                                  val_ma_graph.T[i,k.min()-1],'x',color='red',
-                                 markeredgewidth=2)#caso nati all'inizio 
+                                 markeredgewidth=2)                                #case born at the beginnig  
                     if len(position_1)>0:
                         ax.plot(np.arange(iterations)[position_1],
                                  val_ma_graph.T[i,position_1],
-                                 'x',color='red',markeredgewidth=2) #caso nasce dopo   
-                if k.min()==0: #caso nati dopo
+                                 'x',color='red',markeredgewidth=2)                #case born later   
+                if k.min()==0:                                                     #caso born later
                     position_2=[y+1 for y in range(len(k)-1) if k[y]+1!=k[y+1]] 
                     position_3=[w+1 for w in range(len(k)) if k.max()!=iterations-1]
                     if len(position_2)>0:
                         ax.plot(position_2,
-                                 val_ma_graph.T[i,position_2],'o',color='green')#caso morti 
+                                 val_ma_graph.T[i,position_2],'o',color='green')   #case death
                     if len(position_3)>0:
                         ax.plot(max(position_3),
                                  val_ma_graph.T[i,max(position_3)],
-                                 'o',color='green')#caso non morti
+                                 'o',color='green')                                 #case not death
 
-            ax.plot(0,val_ma_graph.T[i,0],'o',color='green')    #caso nati all'inizio non morti 
+            ax.plot(0,val_ma_graph.T[i,0],'o',color='green')                #case born at the beginnig and death 
             ax.plot(np.arange(iterations)[-1],
-                     val_ma_graph.T[i,-1],'x',color='red',markeredgewidth=2)#caso nati all'inizio non morti
+                     val_ma_graph.T[i,-1],'x',color='red',markeredgewidth=2)#caso born at the beginnig and not death
             ax.plot(np.arange(iterations),
                      val_ma_graph.T[i],label=s[i],color=colors[i])
         ax.set_title('Average points mutation strategies',fontsize=14)
     
     ax.set_xlabel('Iteration')
     ax.set_ylabel('Average points')
-    #fig.legend(loc='center right')
     plt.show()
     return
     
@@ -205,11 +199,13 @@ def graph_population(n_ma,iterations,s,start_s=None):
     else:
         colors = [s_colors[s[i]] for i in range(start_s)]
         colors = up_color(s,start_s)
-    
+        
+    #plot
     fig,ax=plt.subplots(figsize=(14,8.5))
     ax.stackplot(np.arange(iterations),n_ma.T,labels=s,alpha=0.9,colors=colors);
     plt.xlim(range(iterations)[0],range(iterations)[-1])
-
+    
+    #plot setup 
     ax.set_title('Population',fontsize=14)
     ax.set_xlabel('Iterations')
     plt.gca().spines["top"].set_alpha(0)
