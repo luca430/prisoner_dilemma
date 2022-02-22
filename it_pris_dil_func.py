@@ -6,7 +6,6 @@ import numpy.random as npr
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 
-
 strat = {'nice': partial(st.nice_guy),
         'bad': partial(st.bad_guy), 
         'm_nice': partial(st.mainly_nice),
