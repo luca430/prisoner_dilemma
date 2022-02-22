@@ -2,13 +2,12 @@ import numpy as np
 import numpy.random as npr
 
 
-def update_1(h,strat,av,s,s_ref,p_mut = None,change=None): #taglia la testa al toro
+def update_1(h,strat,av,s,s_ref,p_mut = None,change=None):
     new_strat = 0
     h=np.array(h)
 
-
     h1 = []
-    h = np.array(h)
+
     new_strat = 0
     perc = np.array([av[i]/np.sum(av) for i in range(len(strat))])
 
@@ -30,7 +29,7 @@ def update_2(h,strat,av,s,s_ref,p_mut=None,change=None):
     h = np.array(h)
     new_strat = 0
 
-    if np.shape(h) == (len(h.T),): #caso senza mutazione
+    if np.shape(h) == (len(h.T),): #NO mutation
         for i in range(change):
             if len(strat) <= 1: break
             else:
@@ -46,7 +45,7 @@ def update_2(h,strat,av,s,s_ref,p_mut=None,change=None):
                     elif len(strat) == 1:   break
                     else:   h[k[0]] = strat[w2]
     
-    else:                       #caso con mutazione
+    else:                       #YES mutation
         for i in range(change):
             if len(strat.T) <= 1: break
             else:
@@ -90,7 +89,7 @@ def update_3(h,strat,av,s,s_ref,p_mut=None,change=None):
     def lin2_icdf(x,l):
         return l*np.sqrt(x)
 
-    if np.shape(h) == (len(h.T),): #caso senza mutazione
+    if np.shape(h) == (len(h.T),): #NO mutation
         for i in range(change):
             if len(strat) <= 1:break
             else:
@@ -111,7 +110,7 @@ def update_3(h,strat,av,s,s_ref,p_mut=None,change=None):
                     elif len(strat) == 1: break
                     else:   h[k[0]] = strat[w2]
     
-    else:                       #caso con mutazione
+    else:                       #YES mutation
         for i in range(change):
             if len(strat.T)<=1: break
             else:
@@ -162,7 +161,7 @@ def update_4(h,strat,av,s,s_ref,p_mut=None,change=None):
         prob_vec.append(prob_vec[i-2]+(i)*b)
     prob_vec_1 = np.flip(np.array(prob_vec))          #builds the vector of the probabilities to be killed of each strategy
     
-    if np.shape(h) == (len(h.T),): #caso senza mutazione
+    if np.shape(h) == (len(h.T),): #NO mutation
         for i in range(change):
             if len(strat)<=1:break
             else:
@@ -198,7 +197,7 @@ def update_4(h,strat,av,s,s_ref,p_mut=None,change=None):
                     elif len(strat) == 1: break
                     else:h[k[0]]=strat[w2]
     
-    else:                       #caso con mutazione
+    else:                       #YES mutation
         for i in range(change):
             if len(strat.T)<=1: break
             else:
@@ -239,7 +238,6 @@ def update_4(h,strat,av,s,s_ref,p_mut=None,change=None):
 
         for i in range(len(h)):
             if npr.random() < p_mut:
-                #h[1,i] = npr.poisson(lam=0.01)
                 h[1,i] = round(npr.random(),2)
                 if h[1,i] > 1: h[1,i] = 1
                 new_strat += 1
@@ -258,7 +256,7 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
     
     uni = np.unique(av)
     
-    if np.shape(h) == (len(h.T),): #caso senza mutazione
+    if np.shape(h) == (len(h.T),): #NO mutation
         for i in range(change):
             if len(strat)<=1:break
             else:
@@ -301,7 +299,7 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
                     elif len(strat) == 1: break
                     else:h[k[0]]=strat[w2]
     
-    else:                       #caso con mutazione
+    else:                       #YES mutation
         for i in range(change):
             if len(strat.T)<=1: break
             else:
@@ -338,8 +336,7 @@ def update_5(h,strat,av,s,s_ref,p_mut=None,change=None):
                     if w2 == len(av): w2-=1
                 else: break
                             
-                if av[w1] != av[w2]:
-                    #makes sure that I don't replace strategies with the same performance
+                if av[w1] != av[w2]:        #makes sure that I don't replace strategies with the same performance
                     k = -1
                     for i in range(len(h[0])):
                         if np.all(h[:,i] == strat[:,w1]):

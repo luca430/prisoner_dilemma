@@ -103,8 +103,7 @@ def gif(s,population,file_name,start_s=None):
 
 def graph_bar(media,unique,n_unique,s):
     col = [s_colors[val] for val in s]
-    col_1=[col[val] for val in unique] 
-    #col=[i for i in sns.color_palette("flare",n_colors=len(s_unique)) ] 
+    col_1=[col[val] for val in unique]
     
     def autolabel(plot_bar,col_1):
         for idx,rect in enumerate(plot_bar):
@@ -130,7 +129,6 @@ def graph_bar(media,unique,n_unique,s):
     ax.set_title('Average points',fontsize=20)
     
     return autolabel(plot_bar,col_1)
-
 
 def graph_average(h,val_ma,s,iterations,start_s=None):
 
@@ -194,7 +192,7 @@ def graph_average(h,val_ma,s,iterations,start_s=None):
     plt.show()
     return
     
-def graph_population(n_ma,iterations,s,start_s=None):
+def graph_population(n_ma,s,iterations,start_s=None):
     
     if start_s == None:
         colors = [s_colors[val] for val in s]

@@ -4,10 +4,7 @@ import update_func as up
 import numpy as np
 import numpy.random as npr
 import matplotlib.pyplot as plt
-
-from matplotlib import colors
-from matplotlib.ticker import AutoMinorLocator
-import matplotlib.image as mpimg
+from matplotlib.ticker import MaxNLocator
 
 
 strat = {'nice': partial(st.nice_guy),
@@ -49,10 +46,10 @@ def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
 
     p1, p2 = [-1,-1], [-1,-1]
     for i in range(2,N+2):
-        if prob1 == 0 and prob2 == 0:
+        if prob1 == 0 and prob2 == 0:   #NO mutation 
             p1.append(strat[player1](i,p2[i-1],p1[i-1],p2[i-2]))
             p2.append(strat[player2](i,p1[i-1],p2[i-1],p1[i-2]))
-        else:
+        else:                           #YES mutation
             p1.append(mutation(player1,prob1,i,p2[i-1],p1[i-1],p2[i-2]))
             p2.append(mutation(player2,prob2,i,p1[i-1],p2[i-1],p1[i-2]))
 
@@ -63,72 +60,74 @@ def fight(player1,player2,prob1=0,prob2=0,N=None,graph=False,all_outcome=False):
     result_2 = np.cumsum([np.dot(p2[:,i].T,np.dot(M,p1[:,i])) for i in range(N)])
 
     if graph == True:
+        ax = plt.figure().gca()
         plt.xlabel('iteration')
         plt.ylabel('points')
         plt.plot(result_1, label=player1)
         plt.plot(result_2, label=player2)
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
         plt.legend()
 
 
-    if all_outcome == False:
+    if all_outcome == False:    #print only the final results
         return result_1[-1], result_2[-1]
 
-    else:
+    else:                       #also print all uc and ud vectors (useful for fight_grid)
         return result_1[-1], result_2[-1], [player1,p1], [player2,p2]
-
 
 def r_r(h,s):
 
     N = len(h)
-    partecipants = [s[int(i)] for i in h]
+    partecipants = [s[int(i)] for i in h]   #h but with strings
 
     result = np.zeros((N,N))
-    somma = np.zeros(N)
+    score = np.zeros(N)
+
     for i in range(N):
-        for j in range(i+1,N):
+        for j in range(i+1,N):      #avoid the fights along the diagonal
             p1, p2 = fight(partecipants[i],partecipants[j])
             result[i,j] = p1
             result[j,i] = p2
 
-        somma[i] = np.sum(result[i,:])
+        score[i] = np.sum(result[i,:])  #final score of i-th player
 
     unique, n_strategies = np.unique(h,return_counts=True)
-    media = np.zeros(len(unique))
+    mean = np.zeros(len(unique))
 
     for i in range(N):
-        val = int(np.argwhere(unique == h[i]))
-        media[val] += somma[i]
+        idx = int(np.argwhere(unique == h[i]))      #build mean with the same sorting of unique
+        mean[idx] += score[i]
 
-    media = np.round(media/n_strategies,2)
+    mean = np.round(mean/n_strategies,2)
 
-    return unique, media, n_strategies
+    return unique, mean, n_strategies
 
-def r_r_m(h,s):
+def r_r_m(h,s):        #adaptation of r_r for the mutation case
 
     N = len(h.T)
-    partecipants = [s[int(val)] for val in h[0]] #h ma con i nomi
+    partecipants = [s[int(val)] for val in h[0]]
 
     result = np.zeros((N,N))
-    somma = np.zeros(N)
+    score = np.zeros(N)
     for i in range(N):
         for j in range(i+1,N):
             p1, p2 = fight(partecipants[i],partecipants[j], prob1=h[1,i], prob2=h[1,j])
             result[i,j] = p1
             result[j,i] = p2
 
-        somma[i] = np.sum(result[i,:])
+        score[i] = np.sum(result[i,:])
 
     unique, n_strategies = np.unique(h,return_counts=True, axis=1)
-    media = np.zeros(len(unique.T))
-    for i in range(N):
+    mean = np.zeros(len(unique.T))
+    for i in range(N):                              #adaptation of argwhere() for bidimensional case
         for j in range(len(unique.T)):
             if np.all(h[:,i] == unique[:,j]):
-                val = j
-        media[val] += somma[i]
+                idx = j
+        mean[idx] += score[i]
 
-    media = np.round(media/n_strategies,2)
+    mean = np.round(mean/n_strategies,2)
 
-    return unique, media, n_strategies
+    return unique, mean, n_strategies
 
 def round_robin(h,s,ord=False):
 
@@ -137,7 +136,7 @@ def round_robin(h,s,ord=False):
     if np.shape(h) == (len(h.T),): 
         u,m,n = r_r(h,s)
         if ord == True:
-            sort = m.argsort()
+            sort = m.argsort()      #create a mask that orders m,u,n from the lowest score to the higher
             m = m[sort]
             u = u[sort]
             n = n[sort]
@@ -154,13 +153,12 @@ def round_robin(h,s,ord=False):
 def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
 
     h = np.array(h)
-    
-    h=np.array(h)
+ 
     if it == None: it = 100
-    s_ref = [[i,0] for i in range(len(s))]
+    s_ref = [[i,0] for i in range(len(s))]  #associate a list [index,mut=0] for each strategy in s
 
     if np.shape(h) != (len(h.T),):
-        for i in range(len(h[1])):
+        for i in range(len(h[1])):          #check if a mutation is already present at the beginning and initialize it
             if h[1,i] != 0:
                 check=0
                 string = '{}_{}'.format(s[int(h[0,i])],int(h[1,i]*100))
@@ -202,7 +200,7 @@ def tournament(h,update_f,s,it=None,mutation_prob=None,n_change=None):
         n_matrix[i] = numbers_1
         val_matrix[i] = average_1
         
-        if len(np.unique(average_results)) == 1:
+        if len(np.unique(average_results)) == 1:        #break at convergence
             count+=1
             if count == 1: tresh = i
             if count == int(tresh/10) + 3:
